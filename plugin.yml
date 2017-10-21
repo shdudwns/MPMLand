@@ -1,5 +1,5 @@
 name: "MPMLand"
-authors: ["PS88"]
+authors: ["PS88", "GoldBigDragon"]
 main: mpm\Main
 api:
  - 3.0.0-ALPHA8
