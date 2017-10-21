@@ -211,88 +211,16 @@ class main extends PluginBase implements Listener{
             ],
             'welcomeM' => $this->prefix."섬".$num."번에 오신것을 환영합니다."
         ];
-        $this->setBlockArea($num * 201 - 5, 6, 5, $num * 201 + 5, 4, -5, $this->getServer()->getLevelByName("island"), 2);
+	    //코드 수정 필요 (GoldBigDragon님의 리퀘스트 넣은대로 수정 필요)
         return true;
     }
     public function WarpIs(Player $pl, $num){
         if(! $num <= $this->c->get('islast')){
             $pl->sendMessage($this->prefix."당신의 워프하고싶어하는 섬은 없습니다. 꺌꺌꺌");
             return true;
-        }
-        $pl->teleport(new Position($this->c->get('island')[$num] ['senter'] ['x'], 8, $this->c->get('island')[$num] ['sender'] ['z'], 'island'),0,0);
+	}
         $pl->sendPopup($this->c->get('island')[$num] ['welcomeM']);
         return true;
-    }
-    public function setBlockArea($x1, $y1, $z1, $x2, $y2, $z2, Level $level, $id) {
-
-        $pos1 = [];
-        $pos2 = [];
-
-        if($x1 > $x2) {$pos1[0] = $x2; $pos2[0] = $x1;}
-        else if($x1 < $x2) {$pos1[0] = $x1; $pos2[0] = $x2;}
-        else {$pos1[0] = $x1; $pos2[0] = $x1;}
-
-        if($y1 > $y2) {$pos1[1] = $y2; $pos2[1] = $y1;}
-        else if($y1 < $y2) {$pos1[1] = $y1; $pos2[1] = $y2;}
-        else {$pos1[1] = $y1; $pos2[1] = $y1;}
-
-        if($z1 > $z2) {$pos1[2] = $z2; $pos2[2] = $z1;}
-        else if($z1 < $z2) {$pos1[2] = $z1; $pos2[2] = $z2;}
-        else {$pos1[2] = $z1; $pos2[2] = $z1;}
-
-        $block = [];
-        if(is_array($id)) {
-            foreach($id as $i) {
-                $i = explode (':', $i);
-                if(count($i) == 1)
-                    array_push ($block, Block::get($i[0], 0));
-                    else if (count($i) == 2)
-                        array_push ($block, Block::get($i[0], $i[1]));
-                        else
-                            continue;
-            }
-        } else {
-            $i = explode (':', $id);
-            if(count($i) == 1)
-                array_push($block, Block::get($i[0], 0));
-                else if (count($i) == 2)
-                    array_push($block, Block::get($i[0], $i[1]));
-                    else
-                        return;
-        }
-
-        $count = 0;
-        $max = $this->calculateArea($pos1[0], $pos1[1], $pos1[2], $pos2[0], $pos2[1], $pos2[2]);
-        $microt = microtime(true);
-
-        if(count ($block) == 1)
-            for($x = $pos1[0]; $x <= $pos2[0]; $x++)
-                for($y = $pos1[1]; $y <= $pos2[1]; $y++)
-                    for($z = $pos1[2]; $z <= $pos2[2]; $z++) {
-                        ++$count;
-                        if((microtime(true) - $microt) > 0.25||$count == 0||$max == $count) {$microt = microtime(true);}
-                        $level->setBlock( $pos = new Vector3((int)$x,(int)$y,(int)$z) , $block[0], false, false);
-                    }
-                else if(count ($block) > 1) {
-                    $endid = (count($block) - 1);
-                    for($x = $pos1[0]; $x <= $pos2[0]; $x++)
-                        for($y = $pos1[1]; $y <= $pos2[1]; $y++)
-                            for($z = $pos1[2]; $z <= $pos2[2]; $z++) {
-                                ++$count;
-                                if((microtime(true) - $microt) > 0.25||$count == 0||$max == $count) {$microt = microtime(true);}
-                                $select = $block[mt_rand(0, $endid)];
-                                $level->setBlock( $pos = new Vector3((int)$x,(int)$y,(int)$z) , $select, false, false);
-                            }
-                }
-
-    }
-    public function calculateArea($x1, $y1, $z1, $x2, $y2, $z2) {
-        
-        $xlength = (abs($x1 - $x2)+1);
-        $ylength = (abs($y1 - $y2)+1);
-        $zlength = (abs($z1 - $z2)+1);
-        
-        return ($xlength*$ylength*$zlength);
     }
   /*  public static function getInstance(){
         return self::$Instance;
