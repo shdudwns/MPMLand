@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry external="true" kind="lib" path="H:/program files/eclipse/PocketMine-MP.phar"/>
+	<buildpathentry kind="src" path=""/>
+	<buildpathentry external="true" kind="lib" path="H:/program files/eclipse/EconomyAPI_v3.1.6.phar"/>
+</buildpath>
