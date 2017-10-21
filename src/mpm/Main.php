@@ -12,17 +12,20 @@ use pocketmine\level\Position;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use onebone\economyapi\EconomyAPI;
-/*
- *  -num
- *   -owner
- *   -share
- *   -fir(¿ÞÀ§) xup zup
- *   -las(¿À¾Æ·¡)
+
+use mpm\LandGenerator;
+
+/* Author : PS88
+ * 
+ * This php file is modified by GoldBigDragon (OverTook).
  */
 
 class main extends PluginBase implements Listener{
+	
   //  private $Instace;
-    public $prefix = "¡×l¡×f[¡×bMPMLand¡×f]";
+    public $prefix = "Â§lÂ§f[Â§bMPMLandÂ§f]";
+	private $c;
+	
     public function onLoad(){
         $this->c = new Config($this->getDataFolder().'data.json', Config::JSON, [
             'island' => [],
@@ -34,18 +37,35 @@ class main extends PluginBase implements Listener{
     }
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        // Island Name "Land"
+		
+		Generator::addGenerator(LandGenerator::class, "land");
+		$gen = Generator::getGenerator("land");
+		
+		if(!($this->getServer()->loadLevel("Land"))){
+			@mkdir($this->file_build_path($this->getServer()->getDataPath(), "worlds", "Land"));
+			$options = [];
+			$this->getServer()->generateLevel("Land", 0, $gener, $options);
+			$this->getLogger()->info("ì„¬ ìƒì„± ì™„ë£Œ.");
+		}
+		$this->getLogger()->info("ì„¬ ë¡œë“œ ì™„ë£Œ.");
     }
+	
+	function file_build_path(...$segments) {
+Â  Â  	return join(DIRECTORY_SEPARATOR, $segments);
+	}
+	
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
-        if($command->getName() !== "¼¶") return true;
+        if($command->getName() !== "ì„¬") return true;
         if(! $sender instanceof Player) return true;
         $pl = $sender;
         $main = $this;
         switch ($args[0]){
-            /*case '½ÃÀÛ':
+            /*case 'ì‹œìž‘':
                 if(! $pl->isOp()) return true;*/
-            case '±¸¸Å':
+            case 'êµ¬ë§¤':
                 if(EconomyAPI::getInstance()->myMoney($pl->getName()) < 20000){
-                    $pl->sendMessage($main->prefix."µ·ÀÌ ¾ø½À´Ï´Ù.");
+                    $pl->sendMessage($main->prefix."ëˆì´ ì—†ìŠµë‹ˆë‹¤.");
                     return true;
                 }
                 $as = [];
@@ -56,41 +76,78 @@ class main extends PluginBase implements Listener{
                 }
                 if(isset($as)){
                 if(count($as) >= 3){
-                    $pl->sendMessage($main->prefix."´ç½ÅÀÇ ¼¶ °³¼ö°¡ ÃÖ´ë¸¦ Ã¤¿ü½À´Ï´Ù.");
+                    $pl->sendMessage($main->prefix."ë‹¹ì‹ ì˜ ì„¬ ê°œìˆ˜ê°€ ìµœëŒ€ë¥¼ ì±„ì› ìŠµë‹ˆë‹¤.");
                     return true;
                 }
               }
                 $main->mkIs($this->c->get('islast'), $pl->getName());
-                $pl->sendMessage($this->prefix."´ç½ÅÀº".$this->c->get('islast')."¹ø¼¶À» ±¸¸ÅÇÏ¼Ì½À´Ï´Ù.");
+                $pl->sendMessage($this->prefix."ë‹¹ì‹ ì€".$this->c->get('islast')."ë²ˆì„¬ì„ êµ¬ë§¤í•˜ì…¨ìŠµë‹ˆë‹¤.");
                 $w = $this->c->get('islast');
                 $this->c->__unset('islast');
                 $this->c->set('islast',$w + 1);
                 return true;
-            case '¾çµµ':
+            case 'ì–‘ë„':
                 if(! isset($args[1])){
-                    $pl->sendMessage($main->prefix." /¼¶ ¾çµµ [ÇÃ·¹ÀÌ¾î]");
+                    $pl->sendMessage($main->prefix." /ì„¬ ì–‘ë„ [í”Œë ˆì´ì–´]");
                     return true;
                 }
                 if($main->getIsNum($pl) !== null){
-                    $pl->sendMessage($main->prefix."´ç½ÅÀº ¾Æ¹« ¼¶¿¡µµ ÀÖÁö ¾Ê½À´Ï´Ù.");
+                    $pl->sendMessage($main->prefix."ë‹¹ì‹ ì€ ì•„ë¬´ ì„¬ì—ë„ ìžˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
                     return true;
                 }
                 if($main->getIsOwner($main->getIsNum($pl)) !== $pl->getName()){
-                    $pl->sendMessage($main->prefix."´ç½ÅÀÇ ¼¶ÀÌ ¾Æ´Õ´Ï´Ù.");
+                    $pl->sendMessage($main->prefix."ë‹¹ì‹ ì˜ ì„¬ì´ ì•„ë‹™ë‹ˆë‹¤.");
                     return true;
                 }
                 $main->c->get('island')[$main->getIsNum($pl)] ['owner'] = $args[1];
-                $pl->sendMessage($main->prefix."ÀÌ ¼¶À»".$args[1]."´Ô¿¡°Ô ¾çµµÇÏ¿´½À´Ï´Ù.");
+                $pl->sendMessage($main->prefix."ì´ ì„¬ì„".$args[1]."ë‹˜ì—ê²Œ ì–‘ë„í•˜ì˜€ìŠµë‹ˆë‹¤.");
                 return true;
-            case '°øÀ¯':
+            case 'ê³µìœ ':
                 if(! isset($args[1])){
-                    $pl->sendMessage($main->prefix." /¼¶ °øÀ¯ [ÇÃ·¹ÀÌ¾î]");
+                }
+                $as = [];
+                for($i = 0; $i >= count($main->c->get('island')); $i++){
+                  if(! isset($this->c->get('island')[$i])) break;
+                    if($main->getIsOwner($i) !== $args[1]) return true;
+                    array_push($as, $i);
+                }
+                if(isset($as)){
+                if(count($as) >= 3){
+                    $pl->sendMessage($main->prefix."ë‹¹ì‹ ì˜ ì„¬ ê°œìˆ˜ê°€ ìµœëŒ€ë¥¼ ì±„ì› ìŠµë‹ˆë‹¤.");
+                    return true;
+                }
+              }
+                $main->mkIs($this->c->get('islast'), $pl->getName());
+                $pl->sendMessage($this->prefix."ë‹¹ì‹ ì€".$this->c->get('islast')."ë²ˆì„¬ì„ êµ¬ë§¤í•˜ì…¨ìŠµë‹ˆë‹¤.");
+                $w = $this->c->get('islast');
+                $this->c->__unset('islast');
+                $this->c->set('islast',$w + 1);
+                return true;
+            case 'ì–‘ë„':
+                if(! isset($args[1])){
+                    $pl->sendMessage($main->prefix." /ì„¬ ì–‘ë„ [í”Œë ˆì´ì–´]");
+                    return true;
+                }
+                if($main->getIsNum($pl) !== null){
+                    $pl->sendMessage($main->prefix."ë‹¹ì‹ ì€ ì•„ë¬´ ì„¬ì—ë„ ìžˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
+                    return true;
+                }
+                if($main->getIsOwner($main->getIsNum($pl)) !== $pl->getName()){
+                    $pl->sendMessage($main->prefix."ë‹¹ì‹ ì˜ ì„¬ì´ ì•„ë‹™ë‹ˆë‹¤.");
+                    return true;
+                }
+                $main->c->get('island')[$main->getIsNum($pl)] ['owner'] = $args[1];
+                $pl->sendMessage($main->prefix."ì´ ì„¬ì„".$args[1]."ë‹˜ì—ê²Œ ì–‘ë„í•˜ì˜€ìŠµë‹ˆë‹¤.");
+                return true;
+            case 'ê³µìœ ':
+                if(! isset($args[1])){
+                    $pl->sendMessage($main->prefix." /ì„¬ ê³µìœ  [í”Œë ˆì´ì–´]");
                     return true;
                 }elseif($main->getIsNum($pl) !== null){
-                    $pl->sendMessage($main->prefix."´ç½ÅÀº ¾Æ¹« ¼¶¿¡µµ ÀÖÁö ¾Ê½À´Ï´Ù.");
+                    $pl->sendMessage($main->prefix."ë‹¹ì‹ ì€ ì•„ë¬´ ì„¬ì—ë„ ìžˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
                     return true;
                 }elseif($main->getIsOwner($main->getIsNum($pl)) !== $pl->getName()){
-                    $pl->sendMessage($main->prefix."´ç½ÅÀÇ ¼¶ÀÌ ¾Æ´Õ´Ï´Ù.");
+                    $pl->sendMessage($main->prefix."ë‹¹ì‹ ì˜ ì„¬ì´ ì•„ë‹™ë‹ˆë‹¤.");
                     return true;
                 }elseif(! $pl->isOp()){
                 }
@@ -100,12 +157,12 @@ class main extends PluginBase implements Listener{
                 }
                 if(isset($a)){
                     array_unshift($main->c->get('island')[$main->getIsNum($pl)] ['share'], $args[1]);
-                    $pl->sendMessage($main->prefix.$args[1]."´ÔÀ» ¼¶ °øÀ¯ÀÚ¿¡¼­ ¹ÚÅ»½ÃÅ°¼Ì½À´Ï´Ù.");
+                    $pl->sendMessage($main->prefix.$args[1]."ë‹˜ì„ ì„¬ ê³µìœ ìžì—ì„œ ë°•íƒˆì‹œí‚¤ì…¨ìŠµë‹ˆë‹¤.");
                     return true;
                 }
                 array_push($main->c->get('island')[$main->getIsNum($pl)] ['share'], $args[1]);
-                $pl->sendMessage($main->prefix."ÀÌ ¼¶À»".$args[1]."´Ô¿¡°Ô °øÀ¯ÇÏ¿´½À´Ï´Ù."); return true;
-            case 'ÀÌµ¿':
+                $pl->sendMessage($main->prefix."ì´ ì„¬ì„".$args[1]."ë‹˜ì—ê²Œ ê³µìœ í•˜ì˜€ìŠµë‹ˆë‹¤."); return true;
+            case 'ì´ë™':
                 $main->WarpIs($pl, $args[1]);
                 return true;
         }
@@ -152,14 +209,14 @@ class main extends PluginBase implements Listener{
                 'x' => $num * 201,
                 'z' => 0
             ],
-            'welcomeM' => $this->prefix."¼¶".$num."¹ø¿¡ ¿À½Å°ÍÀ» È¯¿µÇÕ´Ï´Ù."
+            'welcomeM' => $this->prefix."ì„¬".$num."ë²ˆì— ì˜¤ì‹ ê²ƒì„ í™˜ì˜í•©ë‹ˆë‹¤."
         ];
         $this->setBlockArea($num * 201 - 5, 6, 5, $num * 201 + 5, 4, -5, $this->getServer()->getLevelByName("island"), 2);
         return true;
     }
     public function WarpIs(Player $pl, $num){
         if(! $num <= $this->c->get('islast')){
-            $pl->sendMessage($this->prefix."´ç½ÅÀÇ ¿öÇÁÇÏ°í½Í¾îÇÏ´Â ¼¶Àº ¾ø½À´Ï´Ù. ²§²§²§");
+            $pl->sendMessage($this->prefix."ë‹¹ì‹ ì˜ ì›Œí”„í•˜ê³ ì‹¶ì–´í•˜ëŠ” ì„¬ì€ ì—†ìŠµë‹ˆë‹¤. êºŒêºŒêºŒ");
             return true;
         }
         $pl->teleport(new Position($this->c->get('island')[$num] ['senter'] ['x'], 8, $this->c->get('island')[$num] ['sender'] ['z'], 'island'),0,0);
