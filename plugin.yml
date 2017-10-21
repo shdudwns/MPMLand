@@ -1,0 +1,10 @@
+name: "MPMLand"
+authors: ["PS88"]
+main: mpm\Main
+api:
+ - 3.0.0-ALPHA8
+version: "Test"
+
+commands:
+ 섬:
+ 
