@@ -1,8 +1,12 @@
 <?php
 namespace mpm;
 
-use pocketmine\level\generator\Generator;
+//use pocketmine\level\generator\Generator;
 use mpm\Sphere;
+use pocketmine\math\Vector3;
+use pocketmine\level\ChunkManager;
+use pocketmine\utils\Random;
+use pocketmine\level\generator\Generator;
 
 class LandGenerator extends Generator {
 
@@ -10,27 +14,27 @@ class LandGenerator extends Generator {
 	private $level;
 	/** @var Random */
 	private $random;
-	
+
 	public function init(ChunkManager $level, Random $random){
 		$this->level = $level;
 		$this->random = $random;
 	}
-	
+
 	public function __construct(array $options = []){
-		
+
 	}
-	
+
 	public function getSettings() : array {
 		return [];
 	}
-	
+
 	public function getName() : string {
-		return "land";
+		return "island";
 	}
-	
+
 	public function generateChunk(int $chunkX, int $chunkZ){
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
-		
+
 		for($x = 0; $x < 16; $x++){
 			for($z = 0; $z < 16; $z++){
 				$chunk->setBlock($x, 0, $z, 7);
@@ -45,7 +49,7 @@ class LandGenerator extends Generator {
 				$chunk->setBlock($x, 9, $z, 8);
 			}
 		}
-		
+
 		while(true){
 			$worldX = $chunkX * 16;
 			$worldZ = $chunkZ * 16;
@@ -78,16 +82,16 @@ class LandGenerator extends Generator {
 					if($high[$x][$z] < $y){
 						$high[$x][$z] = $y;
 					}
-					
+
 					$chunk->setBlock(10, $high[10][10] +1, 10, 17);
 					$chunk->setBlock(10, $high[10][10] +2, 10, 17);
 					$chunk->setBlock(10, $high[10][10] +3, 10, 17);
 					$chunk->setBlock(10, $high[10][10] +4, 10, 17);
 					$chunk->setBlock(10, $high[10][10] +5, 10, 17);
 					$chunk->setBlock(10, $high[10][10] +6, 10, 17);
-				
+
 					//Leave
-				
+
 					$chunk->setBlock(8, $high[10][10] +4, 8, 18);
 					$chunk->setBlock(9, $high[10][10] +4, 8, 18);
 					$chunk->setBlock(10, $high[10][10] +4, 8, 18);
@@ -147,9 +151,9 @@ class LandGenerator extends Generator {
 					$chunk->setBlock(10, $high[10][10] +7, 10, 18);
 					$chunk->setBlock(11, $high[10][10] +7, 10, 18);
 					$chunk->setBlock(10, $high[10][10] +7, 11, 18);
-				
+
 					//Grass
-				
+
 					$chunk->setBlock(3, $high[3][5] +1, 5, 31, 1);
 					$chunk->setBlock(4, $high[4][4] +1, 4, 31, 1);
 					$chunk->setBlock(5, $high[5][12] +1, 12, 31, 1);
@@ -159,7 +163,7 @@ class LandGenerator extends Generator {
 					$chunk->setBlock(9, $high[9][2] +1, 2, 31, 1);
 					$chunk->setBlock(11, $high[11][5] +1, 5, 31, 1);
 					$chunk->setBlock(13, $high[13][7] +1, 7, 31, 1);
-				
+
 					for($i = 0; $i < 16; $i++){
 						for($ii = 0; $ii < 16; $ii++){
 							if($high[$i][$ii] < 10){
@@ -174,11 +178,11 @@ class LandGenerator extends Generator {
 		}
 		$this->level->setChunk($chunkX, $chunkZ, $chunk);
 	}
-	
+
 	public function populateChunk($chunkX, $chunkZ){
-		
+
 	}
-	
+
 	public function getSpawn(){
 		return new Vector3(100, $this->getHighestIslandBlock(), 100);
 	}

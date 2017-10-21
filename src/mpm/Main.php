@@ -12,21 +12,23 @@ use pocketmine\level\Position;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use onebone\economyapi\EconomyAPI;
+use pocketmine\level\generator\Generator;
 
 use mpm\LandGenerator;
 
 /* Author : PS88
- * 
+ *
  * This php file is modified by GoldBigDragon (OverTook).
  */
 
 class main extends PluginBase implements Listener{
-	
+
   //  private $Instace;
     public $prefix = "§l§f[§bMPMLand§f]";
 	private $c;
-	
+
     public function onLoad(){
+			@mkdir($this->getDataFolder());
         $this->c = new Config($this->getDataFolder().'data.json', Config::JSON, [
             'island' => [],
             'land' => []
@@ -38,10 +40,10 @@ class main extends PluginBase implements Listener{
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         // Island Name "Land"
-		
+
 		Generator::addGenerator(LandGenerator::class, "island");
 		$gener = Generator::getGenerator("island");
-		
+
 		if(!($this->getServer()->loadLevel("island"))){
 			@mkdir($this->file_build_path($this->getServer()->getDataPath(), "worlds", "island"));
 			$options = [];
@@ -50,11 +52,11 @@ class main extends PluginBase implements Listener{
 		}
 		$this->getLogger()->info("섬 로드 완료.");
     }
-	
+
 	function file_build_path(...$segments) {
-    	return join(DIRECTORY_SEPARATOR, $segments);
+    	return join(DIRECTORY_SEPARATOR, $segments);// T_STRING 뭐시기 오류나요..
 	}
-	
+
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
         if($command->getName() !== "섬") return true;
         if(! $sender instanceof Player) return true;
