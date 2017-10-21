@@ -40,7 +40,7 @@ class main extends PluginBase implements Listener{
         // Island Name "Land"
 		
 		Generator::addGenerator(LandGenerator::class, "land");
-		$gen = Generator::getGenerator("land");
+		$gener = Generator::getGenerator("land");
 		
 		if(!($this->getServer()->loadLevel("Land"))){
 			@mkdir($this->file_build_path($this->getServer()->getDataPath(), "worlds", "Land"));
