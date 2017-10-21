@@ -39,13 +39,13 @@ class main extends PluginBase implements Listener{
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         // Island Name "Land"
 		
-		Generator::addGenerator(LandGenerator::class, "land");
-		$gener = Generator::getGenerator("land");
+		Generator::addGenerator(LandGenerator::class, "island");
+		$gener = Generator::getGenerator("island");
 		
-		if(!($this->getServer()->loadLevel("Land"))){
-			@mkdir($this->file_build_path($this->getServer()->getDataPath(), "worlds", "Land"));
+		if(!($this->getServer()->loadLevel("island"))){
+			@mkdir($this->file_build_path($this->getServer()->getDataPath(), "worlds", "island"));
 			$options = [];
-			$this->getServer()->generateLevel("Land", 0, $gener, $options);
+			$this->getServer()->generateLevel("island", 0, $gener, $options);
 			$this->getLogger()->info("섬 생성 완료.");
 		}
 		$this->getLogger()->info("섬 로드 완료.");
