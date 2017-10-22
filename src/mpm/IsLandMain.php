@@ -14,14 +14,14 @@ use pocketmine\command\Command;
 use onebone\economyapi\EconomyAPI;
 use pocketmine\level\generator\Generator;
 
-use mpm\LandGenerator;
+use mpm\IsLandGenerator as LandGenerator;
 
 /* Author : PS88
  *
  * This php file is modified by GoldBigDragon (OverTook).
  */
 
-class main extends PluginBase implements Listener{
+class IsLandMain extends PluginBase implements Listener{
 
   //  private $Instace;
     public $prefix = "§l§f[§bMPMLand§f]";
