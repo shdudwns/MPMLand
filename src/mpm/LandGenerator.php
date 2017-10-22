@@ -3,6 +3,7 @@ namespace mpm;
 
 //use pocketmine\level\generator\Generator;
 use mpm\Sphere;
+use mpm\Main;
 use pocketmine\math\Vector3;
 use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
@@ -51,6 +52,14 @@ class LandGenerator extends Generator {
 		}
 
 		while(true){
+			$main = new Main();
+			$num = $this->c->get('islast');
+			$main->c->get('island')[$num] = [
+				'share' => [],
+				'welcomeM' => "섬".$num."번입니다. 가격 : 20000원"
+			];
+			$this->c->__unset('islast');
+			$this->c->set('islast', $num + 1);
 			$worldX = $chunkX * 16;
 			$worldZ = $chunkZ * 16;
 			if($chunkX < 0 or $chunkZ < 0){

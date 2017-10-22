@@ -63,32 +63,31 @@ class main extends PluginBase implements Listener{
               $pl->sendMessage($this->prefix."돈이 부족합니다.");
               return true;
             }
+            if(! isset($args[1])){
+              $pl->sendMessage($this->prefix."/섬 구매 [번호]");
+              return true;
+            }
             if($this->getPlIs($pl->getName()) !== true){
             if(count($this->getPlIs($pl->getName())) >= 3 ){
               $pl->sendMessage($this->prefix."더이상의 섬을 구매하실 수 없습니다.");
               return true;
             }
           }
-            $bnum = $this->c->get('islast');
-            $this->c->get('island')[$bnum] = [
+          if(! isset($this->c->get('island')[$args[1]] ['owner'])){
+            $pl->sendMessage($this->prefix."더이상의 섬을 구매하실 수 없습니다.");
+            return true;
+          }
+            $bnum = $args[1];
+            array_push($this->c->get('island')[$bnum],
               'owner' => $pl->getName(),
-              'share' => [],
-              'spawn' => 103 + $bnum * 200,
               'welcomeM' => "섬".$bnum."번에 오신것을 환영합니다."
-              ];
-              $this->c->__unset('islast');
-              $this->c->set('islast', $bnum + 1);
+            );
               $pl->sendMessage($this->prefix."당신은 섬".$bnum."번을 구매하셨습니다.");
             break;
             case '공유':
-            for($i = 0; $i >= $this->c->get('islast'); $i++){
-                if($pl->distance(new Vector3($this->c->get('island')[$i] ['spawn'], 12, 297) <= 200){
-                  //$num = $i;
-                  break;
-                }
-            }
-            if($pl->getLevel()->getName() !== 'island' or ! isset($num)){
-              $pl->sendMessage($this->prefix."당신은 섬 월드에 있지 않거나 등록된 섬에도 있지 않습니다.");
+            $num = $this->getIsnum($pl);
+            if($num == false){
+              $pl->sendMessage($this->prefix."당신은 아무 섬에도 있지 않습니다.");
               return true;
             }
             if(! $this->c->get('island')[$num] ['owner'] <= $pl->getName()){
@@ -103,14 +102,9 @@ class main extends PluginBase implements Listener{
             $pl->sendMessage($this->prefix."당신의 섬을".$args[1]."님께 공유하셨습니다.");
             return true;
             case '공유해제':
-            for($i = 0; $i >= $this->c->get('islast'); $i++){
-                if($pl->distance(new Vector3($this->c->get('island')[$i] ['spawn'], 12, 297) <= 200){
-                  $num = $i;
-                  break;
-                }
-            }
-            if($pl->getLevel()->getName() !== 'island' or ! isset($num)){
-              $pl->sendMessage($this->prefix."당신은 섬 월드에 있지 않거나 등록된 섬에도 있지 않습니다.");
+            $num = $this->getIsnum($pl);
+            if($num == false){
+              $pl->sendMessage($this->prefix."당신은 아무 섬에도 있지 않습니다.");
               return true;
             }
             if(! $this->c->get('island')[$num] ['owner'] <= $pl->getName()){
@@ -135,14 +129,9 @@ class main extends PluginBase implements Listener{
             $pl->sendMessage($this->prefix."공유자".$args[1]."님을 섬에서 공유 해제하였습니다.");
             break;
             case '양도':
-            for($i=0; $i >= $this->c->get('islast'); $i++){
-                if($pl->distance(new Vector3($this->c->get('island')[$i] ['spawn'], 12, 297) <= 200){
-                  $num = $i;
-                  break;
-                }
-            }
-            if($pl->getLevel()->getName() !== 'island' or ! isset($num)){
-              $pl->sendMessage($this->prefix."당신은 섬 월드에 있지 않거나 등록된 섬에도 있지 않습니다.");
+            $num = $this->getIsnum($pl);
+            if($num == false){
+              $pl->sendMessage($this->prefix."당신은 아무 섬에도 있지 않습니다.");
               return true;
             }
             if(! $this->c->get('island')[$num] ['owner'] <= $pl->getName()){
@@ -162,11 +151,7 @@ class main extends PluginBase implements Listener{
               $pl->sendMessage($this->prefix."/섬 이동 [섬번호]");
               return true;
             }
-            if(! $this->c->get('islast') <= $args[1]){
-              $pl->sendMessage($this->prefix."현재 워프하려는 섬은 등록되지 않았거나 존재하지 않는 섬입니다.");
-              return true;
-            }
-            $pl->teleport(new Position($this->c->get('island')[$args[1]] ['spawn'], 12, 297),0,0);
+            $pl->teleport(new Position(103 + $args[1] * 200, 12, 297),0,0);
             $pl->sendPopup($this->prefix.$this->c->get('island')[$args[1]] ['welcomeM']);
             break;
           default:
@@ -183,5 +168,19 @@ class main extends PluginBase implements Listener{
         }
       }
       return $a;
+    }
+    public function getIsnum(Player $pl){
+      if($pl->getLevel()->getName() !== "island"){$return = false; return true;}
+      for($i = 0; $i >= $this->c->get('islast'); $i++){
+        if($pl->distance(new Vector3(103 + $i * 200, 12, 297)) <= 200){
+          $return = $i;
+          break;
+        }
+        if($i >= $this->c->get('islast')){
+          $return = false;
+          break;
+        }
+      }
+      return $return;
     }
 }
