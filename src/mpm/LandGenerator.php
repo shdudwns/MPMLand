@@ -183,8 +183,8 @@ class LandGenerator extends Generator {
 
 	}
 
-	public function getSpawn(){
-		return new Vector3(100, $this->getHighestIslandBlock(), 100);
+	public function getSpawn() : Vector3 {
+		return new Vector3(100, 25, 100);
 	}
 }
 
