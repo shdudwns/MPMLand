@@ -53,9 +53,9 @@ class main extends PluginBase implements Listener{
 		$this->getLogger()->info("섬 로드 완료.");
     }
 
-	function file_build_path(...$segments) {
-    	return join(DIRECTORY_SEPARATOR, $segments);// T_STRING 뭐시기 오류나요..
-	}
+    public function file_build_path(...$segments) {
+    	return join("/", $segments); //TODO
+    }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
         if($command->getName() !== "섬") return true;
