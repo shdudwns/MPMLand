@@ -30,11 +30,12 @@ class FieldGenerator extends Generator {
 	}
 
 	public function getName() : string {
-		return "island";
+		return "field";
 	}
 
 	public function generateChunk(int $chunkX, int $chunkZ){
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
+    $y = 10;
 
 		for($x = 0; $x < 16; $x++){
 			for($z = 0; $z < 16; $z++){
