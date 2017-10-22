@@ -45,16 +45,12 @@ class main extends PluginBase implements Listener{
 		$gener = Generator::getGenerator("island");
 
 		if(!($this->getServer()->loadLevel("island"))){
-			@mkdir($this->file_build_path($this->getServer()->getDataPath(), "worlds", "island"));
+			@mkdir($this->getServer()->getDataPath() . "/" . "worlds" . "/" . "island"); //Okay, Remove method.
 			$options = [];
 			$this->getServer()->generateLevel("island", 0, $gener, $options);
 			$this->getLogger()->info("섬 생성 완료.");
 		}
 		$this->getLogger()->info("섬 로드 완료.");
-    }
-
-    public function file_build_path(...$segments) {
-    	return join("/", $segments); //TODO
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
