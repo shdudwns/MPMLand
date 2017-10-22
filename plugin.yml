@@ -3,8 +3,8 @@ authors: ["PS88", "GoldBigDragon"]
 main: mpm\Main
 api:
  - 3.0.0-ALPHA8
-version: "Test"
+version: "Beta1"
 
 commands:
- 섬:
- 
+  섬:
+    permission: MPMLand
