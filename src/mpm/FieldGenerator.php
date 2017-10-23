@@ -3,7 +3,7 @@ namespace mpm;
 
 //use pocketmine\level\generator\Generator;
 use mpm\Sphere;
-use mpm\FieldMain;
+use mpm\IslandMain as FieldMain;
 use pocketmine\math\Vector3;
 use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
@@ -68,7 +68,7 @@ class FieldGenerator extends Generator {
           break;
         }
       }
-      $this->setBlockArea($xl * 32 + 2, $y, $zl * 32 + 2, $xl * 32 + 30, $y - 3, $zl * 32 + 30, $main->getServer()->getLevelByName('island'), 2);
+      $this->setBlockArea($xl * 32 + 2, $y, $zl * 32 + 2, $xl * 32 + 30, $y - 3, $zl * 32 + 30, $this->getServer()->getLevelByName('island'), 2);
       for($i = 0; $i >= 32; $i++){
         $chunk->setBlock($xl * 32 + $i, $y, $zl * 32, $iv1);
         $chunk->setBlock($xl * 32, $y, $zl * 32 + $i, $iv1);
