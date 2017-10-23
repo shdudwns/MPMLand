@@ -8,6 +8,7 @@ use pocketmine\math\Vector3;
 use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
 use pocketmine\level\generator\Generator;
+use pocketmine\block\Block;
 
 class FieldGenerator extends Generator {
 
@@ -53,7 +54,8 @@ class FieldGenerator extends Generator {
 		}
 
 		while(true){
-      $y = 14;
+      $y = 12;
+			$bad = 7;//베드락 코드가 이게 맞겠죠..?
       $iv1 = 1; //일단 돌로 했어요.. 실험하려고..;
       $iv = 3; //이것도 위와 같이..;;
 			//$worldX = $chunkX * 16;
@@ -68,15 +70,25 @@ class FieldGenerator extends Generator {
           break;
         }
       }
-      $this->setBlockArea($xl * 32 + 2, $y, $zl * 32 + 2, $xl * 32 + 30, $y - 3, $zl * 32 + 30, $this->getServer()->getLevelByName('island'), 2);
-      for($i = 0; $i >= 32; $i++){
-        $chunk->setBlock($xl * 32 + $i, $y, $zl * 32, $iv1);
-        $chunk->setBlock($xl * 32, $y, $zl * 32 + $i, $iv1);
-      }
-      for($i = 1; $i >= 31; $i++){
-        $chunk->setBlock($xl * 32 + $i, $y, $zl * 32, $iv1);
-        $chunk->setBlock($xl * 32, $y, $zl * 32 + $i, $iv1);
-      }
+      $this->setBlockArea($xl * 35 + 3, $y, $zl * 35 + 3, $xl * 35 + 32, $y, $zl * 35 + 32, $this->getServer()->getdefaultLevel('field'), 2);
+			for($i = 0; $i >= 29; $i++){
+			for($ii = 1; $ii >= 3; $ii++){
+				$this->level->setBlock($xl * 35 + 2 + $i, $y - $ii, $zl * 35 + 2, $bad);
+			}
+			$this->level->setBlock($xl * 35 + 2 + $i, $y, $zl * 35 + 2, $iv1);
+		}
+		for($i = 0; $i >= 29; $i++){
+		for($ii = 1; $ii >= 3; $ii++){
+			$this->level->setBlock($xl * 35 + 2, $y - $ii, $zl * 35 + 2 + $i, $bad);
+		}
+		$this->level->setBlock($xl * 35 + 2, $y, $zl * 35 + 2 + $i, $iv1);
+	}
+	$this->setBlockArea($xl * 35, $y, $zl * 35, $xl * 35 + 1, $y, $zl * 35 + 35, $this->getServer()->getdefaultLevel('field'), $iv2);
+	$this->setBlockArea($xl * 35 + 33, $y, $zl * 35, $xl * 35 + 34, $y, $zl * 35 + 34, $this->getServer()->getdefaultLevel('field'), $iv2);
+$this->setBlockArea($xl * 35 + 33, $y, $zl * 35, $xl * 35 + 34, $y, $zl * 35 + 35, $this->getServer()->getdefaultLevel('field'), $iv2);
+$this->setBlockArea($xl * 35, $y, $zl * 35 + 33, $xl * 35 + 1, $y, $zl * 35 + 34, $this->getServer()->getdefaultLevel('field'), $iv2);
+}
+	for($i = 0; $i >= 29)
       $main = new FieldMain();
 			$num = $this->c->get('filast');
 			$main->c->get('field')[$num] = [
