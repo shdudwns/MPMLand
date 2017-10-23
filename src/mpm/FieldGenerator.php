@@ -8,11 +8,11 @@ namespace mpm;
 
 use pocketmine\level\generator\Generator;
 use pocketmine\block\Block;
-use pocketmine\block\BlockStone;
+use pocketmine\block\Stone as BlockStone;
 use pocketmine\level\ChunkManager;
 use pocketmine\level\format\generic\BaseFullChunk;
 use pocketmine\math\Vector3;
-use pocketmine\math\Random;
+use pocketmine\utils\Random;
 
 class FieldGenerator extends Generator{
 
@@ -38,7 +38,7 @@ class FieldGenerator extends Generator{
 	private $landBlockDamage = 0;
 	private $landWidth = 32;
 	private $landDepth = 32;
-	private $landBorderBlockId= Block::DOUBLE_SLAB;
+	private $landBorderBlockId= Block::DOUBLE_SLAB; //..?
 	private $landBorderBlockDamage = 0;
 
 	public function getChunkManager() : ChunkManager{
@@ -72,7 +72,7 @@ class FieldGenerator extends Generator{
 	}
 	public function generateChunk(int $chunkX, int $ChunkZ){
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
-		if($chunkX >= 0 && $chunkZ >= 0;){
+		if($chunkX >= 0 && $chunkZ >= 0){
 			for($x = 0; $x <= 15; $x++){
 				for($z = 0; $z <= 15; $z++){
 					$chunk->setBiomeColor($x,$z,133,188,86);

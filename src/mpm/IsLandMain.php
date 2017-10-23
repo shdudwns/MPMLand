@@ -330,18 +330,22 @@ class IsLandMain extends PluginBase implements Listener{
         $xl = $a['x'];
         //$yl = $a['y'];
         $zl = $a['z'];
-        if(! $xf <= $pl->getX() <= $xl)continue;
+        if(! $xf <= $pl->getX())continue;
+        if(! $pl->getX() <= $xl) continue;
         //if(! $xf <= $pl->getX() <= $xl)continue; Y는 그냥 상관이 없어요~
-        if(! $zf <= $pl->getZ() <= $zl)continue;
+        if(! $zf <= $pl->getZ())continue;
+        if(! $pl->getZ() <= $zl) continue;
           if($pl->getLevel()->getName() !== $this->c->get('field')[$i] ['pos'] ['level']) continue;
           $return = $i;
           break;
-        }
+
         if($i >= $this->c->get('flast')){
           $return = false;
+          return true;
           break;
         }
       }
-      return $return;
+        return $return;
+      }
+    //  return $return;
     }
-}

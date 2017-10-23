@@ -1,6 +1,6 @@
 name: "MPMLand"
 authors: ["PS88", "GoldBigDragon"]
-main: mpm\Main
+main: mpm\IsLandMain
 api:
  - 3.0.0-ALPHA8
 version: "Beta1"
