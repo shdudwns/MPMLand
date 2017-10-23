@@ -186,8 +186,8 @@ class IsLandMain extends PluginBase implements Listener{
               $pl->sendMessage($this->prefix."/땅 구매 [번호]");
               return true;
             }
-            if($this->getPlIs($pl->getName()) !== true){
-            if(count($this->getPlIs($pl->getName())) >= 3 ){
+            if($this->getPlFi($pl) == true){
+            if(count($this->getPlFi($pl)) >= 3 ){
               $pl->sendMessage($this->prefix."더이상의 땅을 구매하실 수 없습니다.");
               return true;
             }
@@ -202,7 +202,7 @@ class IsLandMain extends PluginBase implements Listener{
               $pl->sendMessage($this->prefix."당신은 땅".$bnum."번을 구매하셨습니다.");
             break;
             case '공유':
-            $num = $this->getIsnum($pl);
+            $num = $this->getFinum($pl);
             if($num == false){
               $pl->sendMessage($this->prefix."당신은 아무 땅에도 있지 않습니다.");
               return true;
@@ -219,7 +219,7 @@ class IsLandMain extends PluginBase implements Listener{
             $pl->sendMessage($this->prefix."당신의 땅을".$args[1]."님께 공유하셨습니다.");
             return true;
             case '공유해제':
-            $num = $this->getIsnum($pl);
+            $num = $this->getFinum($pl);
             if($num == false){
               $pl->sendMessage($this->prefix."당신은 아무 땅에도 있지 않습니다.");
               return true;
@@ -246,7 +246,7 @@ class IsLandMain extends PluginBase implements Listener{
             $pl->sendMessage($this->prefix."공유자".$args[1]."님을 땅에서 공유 해제하였습니다.");
             break;
             case '양도':
-            $num = $this->getIsnum($pl);
+            $num = $this->getFinum($pl);
             if($num == false){
               $pl->sendMessage($this->prefix."당신은 아무 땅에도 있지 않습니다.");
               return true;
@@ -269,14 +269,12 @@ class IsLandMain extends PluginBase implements Listener{
               return true;
             }
             $num = $args[1];
-            for($i = 0; $num - $i * 20 < 20; $i++){
-              if($num - $i * 20 < 20){
-                $zl = $num - $i * 20;
-                $xl = $i;
-                break;
-              }
-            }
-            $pl->teleport(new Position($xl * 32 + 2, 12, $zl * 32 + 2),0,0);
+            $a = $this->c->get('field')[$num] ['pos'];
+            $x = $a['x'];
+            $y = $a['y'];
+            $z = $a['z'];
+            $level = $a['level'];
+            $pl->teleport(new Position($x, $y, $z, $level),0,0);
             $pl->sendPopup($this->prefix.$this->c->get('field')[$args[1]] ['welcomeM']);
             break;
           default:
@@ -303,6 +301,43 @@ class IsLandMain extends PluginBase implements Listener{
           break;
         }
         if($i >= $this->c->get('islast')){
+          $return = false;
+          break;
+        }
+      }
+      return $return;
+    }
+    public function mkFi($x1, $y1, $z1, $x2, $y2, $z2, $level){
+
+    }
+    public function getPlFi($pname){
+      $a = [];
+      if($this->c->get('flast') <= 0) return true;
+      for($i = 0; $i >= $this->c->get('flast'); $i++){
+        if($this->c->get('field')[$i] ['owner'] == $pname){
+          array_push($a, $i);
+        }
+      }
+      return $a;
+    }
+    public function getFinum(Player $pl){
+      for($i = 0; $i >= $this->c->get('islast'); $i++){
+        $af = $this->c->get('field')[$i] ['fpos'];
+        $xf = $af['x'];
+        //$yf = $af['y'];
+        $zf = $af['z'];
+        $a = $this->c->get('field')[$num] ['lpos'];
+        $xl = $a['x'];
+        //$yl = $a['y'];
+        $zl = $a['z'];
+        if(! $xf <= $pl->getX() <= $xl)continue;
+        //if(! $xf <= $pl->getX() <= $xl)continue; Y는 그냥 상관이 없어요~
+        if(! $zf <= $pl->getZ() <= $zl)continue;
+          if($pl->getLevel()->getName() !== $this->c->get('field')[$i] ['pos'] ['level']) continue;
+          $return = $i;
+          break;
+        }
+        if($i >= $this->c->get('flast')){
           $return = false;
           break;
         }
