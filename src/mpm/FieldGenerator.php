@@ -1,21 +1,55 @@
 <?php
 namespace mpm;
 
-//use pocketmine\level\generator\Generator;
-use mpm\Sphere;
-use mpm\FieldMain;
-use pocketmine\math\Vector3;
-use pocketmine\level\ChunkManager;
-use pocketmine\utils\Random;
+/*
+ * 이 코드는 SOLOLand(Nukkit) 에서 가져왔으며
+ * PS가 java에서 php로 번역하였음을 알려드립니다.
+ */
+
 use pocketmine\level\generator\Generator;
+use pocketmine\block\Block;
+use pocketmine\block\Stone as BlockStone;
+use pocketmine\level\ChunkManager;
+use pocketmine\level\format\generic\BaseFullChunk;
+use pocketmine\math\Vector3;
+use pocketmine\utils\Random;
 
-class FieldGenerator extends Generator {
+class FieldGenerator extends Generator{
 
-	/** @var ChunkManager */
+	//public static TYPE_GRID_LAND = 11;
+
+/** @var ChunkManager */
 	private $level;
-	/** @var Random */
-	private $random;
 
+	private $options = [];
+	private $floorLevel;
+
+	private $preset = "1;7,4x1,3x3;3;road(block=1:6 width=5 depth=5),land(width=32 depth=32 border=43 block=2)";
+	private $version = 1;
+
+	private $flatBlocksId = [Block::BEDROCK, Block::STONE, Block::STONE, Block::STONE, Block::STONE, Block::DIRT, Block::DIRT, Block::DIRT];
+	private $flatBlocksDamage = [0, 0, 0, 0, 0, 0, 0, 0];
+	private $roadBlockId = Block::STONE;
+	private $roadBlockDamage = BlockStone::POLISHED_ANDESITE;
+	private $roadWidth = 5;
+	private $roadDepth = 5;
+
+	private $landBlockId= 2;
+	private $landBlockDamage = 0;
+	private $landWidth = 32;
+	private $landDepth = 32;
+	private $landBorderBlockId= Block::DOUBLE_SLAB; //..?
+	private $landBorderBlockDamage = 0;
+
+	public function getChunkManager() : ChunkManager{
+		return $level;
+	}
+	public function getSettings() : array{
+		return $this->options;
+	}
+	public function getName() : string{
+		return "field";
+	}
 	public function init(ChunkManager $level, Random $random){
 		$this->level = $level;
 		$this->random = $random;
@@ -24,156 +58,70 @@ class FieldGenerator extends Generator {
 	public function __construct(array $options = []){
 
 	}
-
-	public function getSettings() : array {
-		return [];
+	public function getLandWidth() : int{
+		return $this->landWidth;
 	}
-
-	public function getName() : string {
-		return "field";
+	public function getLandDepth() : int{
+		return $this->landDepth;
 	}
-
-	public function generateChunk(int $chunkX, int $chunkZ){
+	public function getRoadWidth() : int{
+		return $this->roadWidth;
+	}
+	public function getRoadDepth() : int{
+		return $this->roadDepth;
+	}
+	public function generateChunk(int $chunkX, int $ChunkZ){
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
-    $y = 10;
-
-		for($x = 0; $x < 16; $x++){
-			for($z = 0; $z < 16; $z++){
-				$chunk->setBlock($x, 0, $z, 7);
-				$chunk->setBlock($x, 1, $z, 1);
-				$chunk->setBlock($x, 2, $z, 1);
-				$chunk->setBlock($x, 3, $z, 1);
-				$chunk->setBlock($x, 4, $z, 1);
-				$chunk->setBlock($x, 5, $z, 1);
-				$chunk->setBlock($x, 6, $z, 1);
-				$chunk->setBlock($x, 7, $z, 12);
-				$chunk->setBlock($x, 8, $z, 1);
-				$chunk->setBlock($x, 9, $z, 2);
+		if($chunkX >= 0 && $chunkZ >= 0){
+			for($x = 0; $x <= 15; $x++){
+				for($z = 0; $z <= 15; $z++){
+					$chunk->setBiomeColor($x,$z,133,188,86);
+					for($i = 0; $i < $this->flatBlocksId->length; $i++){
+						$chunk->setBlock($x, $i, $z, $this->flatBlocksId[$i], $this->flatBlocksDamage[$i]);
+					}
+					$calcRed = $this->calcGen($chunkX * 16 + $x, $chunkZ * 16 + $z);
+					$chunk->setBlock($x, $this->flatBlocksId->length, $z, $calcRet[0], $calcRet[1]);
+				}
 			}
-		}
-
-		while(true){
-      $y = 14;
-      $iv1 = 1; //일단 돌로 했어요.. 실험하려고..;
-      $iv = 3; //이것도 위와 같이..;;
-			//$worldX = $chunkX * 16;
-			//$worldZ = $chunkZ * 16;
-			if($chunkX < 0 or $chunkZ < 0){
-				break;
-			}
-      for($i = 0; $num - $i * 20 < 20; $i++){
-        if($num - $i * 20 < 20){
-          $zl = $num - $i * 20;
-          $xl = $i;
-          break;
-        }
-      }
-      $this->setBlockArea($xl * 32 + 2, $y, $zl * 32 + 2, $xl * 32 + 30, $y - 3, $zl * 32 + 30, $main->getServer()->getLevelByName('island'), 2);
-      for($i = 0; $i >= 32; $i++){
-        $chunk->setBlock($xl * 32 + $i, $y, $zl * 32, $iv1);
-        $chunk->setBlock($xl * 32, $y, $zl * 32 + $i, $iv1);
-      }
-      for($i = 1; $i >= 31; $i++){
-        $chunk->setBlock($xl * 32 + $i, $y, $zl * 32, $iv1);
-        $chunk->setBlock($xl * 32, $y, $zl * 32 + $i, $iv1);
-      }
-      $main = new FieldMain();
-			$num = $this->c->get('filast');
-			$main->c->get('field')[$num] = [
-				'share' => [],
-				'welcomeM' => "평야".$num."번입니다. 가격 : 100000원"
-			];
-			$this->c->__unset('filast');
-			$this->c->set('fillast', $num + 1);
-			break;
 		}
 		$this->level->setChunk($chunkX, $chunkZ, $chunk);
 	}
+	private function calcGen(int $worldX, int $worldZ){
+		$landBlock = [$this->landBlockId, $this->landBlockDamage];
+		$roadBLock = [$this->roadBlockId, $this->roadBlockDamage];
+		$landBorder = [$this->landBorderBlockId, $this->landBorderBlockDamage];
 
-	public function populateChunk($chunkX, $chunkZ){
+		if($worldX == 0 || $worldZ == 0){
+			return $landBorder;
+		}
+		$gridlandx = $worldX % ($this->landWidth + $this->roadWidth);
+		$gridlandz = $worldZ % ($this->landDepth + $this->roadDepth);
 
+		if($gridlandx >= ($this->roadWidth + 2) && $gridlandz >= ($this->roadDepth + 2)){
+			return $landBlock;
+		}
+		if($gridlandx >= ($this->roadWidth + 1) && $gridlandz >= ($this->roadDepth + 1)){
+			return $landBorder;
+		}
+		if($gridlandx >= 1 && $gridlandz >= 1){
+			return $roadBlock;
+		}
+
+		if($gridlandx == 0 && $gridlandz >= ($this->roadDepth + 1)){
+			return $landBorder;
+		}
+		if($gridlandz == 0 && $gridlandx >= ($this->roadWidth + 1)){
+			return $landBorder;
+		}
+		if($gridlandx == 0 && $gridlandz == 0){
+			return $landBorder;
+		}
+		return $roadBlock;
 	}
-
-	public function getSpawn() : Vector3 {
-		return new Vector3(100, 25, 100);
+	public function populateChunk(int $chunkX, int $chunkZ){
 	}
-
-
- /*
-  *  이 코드는 솔로월엣 플긴에서 가져 왔습니다.
-  */
-
-  public function calculateArea($x1, $y1, $z1, $x2, $y2, $z2) {
-
-    $xlength = (abs($x1 - $x2)+1);
-    $ylength = (abs($y1 - $y2)+1);
-    $zlength = (abs($z1 - $z2)+1);
-
-    return ($xlength*$ylength*$zlength);
-  }
-  public function setBlockArea($x1, $y1, $z1, $x2, $y2, $z2, Level $level, $id) {
-
-    $pos1 = [];
-    $pos2 = [];
-
-    if($x1 > $x2) {$pos1[0] = $x2; $pos2[0] = $x1;}
-    else if($x1 < $x2) {$pos1[0] = $x1; $pos2[0] = $x2;}
-    else {$pos1[0] = $x1; $pos2[0] = $x1;}
-
-    if($y1 > $y2) {$pos1[1] = $y2; $pos2[1] = $y1;}
-    else if($y1 < $y2) {$pos1[1] = $y1; $pos2[1] = $y2;}
-    else {$pos1[1] = $y1; $pos2[1] = $y1;}
-
-    if($z1 > $z2) {$pos1[2] = $z2; $pos2[2] = $z1;}
-    else if($z1 < $z2) {$pos1[2] = $z1; $pos2[2] = $z2;}
-    else {$pos1[2] = $z1; $pos2[2] = $z1;}
-
-    $block = [];
-    if(is_array($id)) {
-    foreach($id as $i) {
-      $i = explode (':', $i);
-      if(count($i) == 1)
-        array_push ($block, Block::get($i[0], 0));
-      else if (count($i) == 2)
-        array_push ($block, Block::get($i[0], $i[1]));
-      else
-        continue;
-      }
-    } else {
-      $i = explode (':', $id);
-      if(count($i) == 1)
-        array_push($block, Block::get($i[0], 0));
-      else if (count($i) == 2)
-        array_push($block, Block::get($i[0], $i[1]));
-      else
-        return;
-    }
-
-    $count = 0;
-    $max = $this->calculateArea($pos1[0], $pos1[1], $pos1[2], $pos2[0], $pos2[1], $pos2[2]);
-    $microt = microtime(true);
-
-    if(count ($block) == 1)
-    for($x = $pos1[0]; $x <= $pos2[0]; $x++)
-      for($y = $pos1[1]; $y <= $pos2[1]; $y++)
-        for($z = $pos1[2]; $z <= $pos2[2]; $z++) {
-          ++$count;
-          if((microtime(true) - $microt) > 0.25||$count == 0||$max == $count) { $microt = microtime(true);}
-          $level->setBlock( $pos = new Vector3((int)$x,(int)$y,(int)$z) , $block[0], false, false);
-        }
-    else if(count ($block) > 1) {
-    $endid = (count($block) - 1);
-    for($x = $pos1[0]; $x <= $pos2[0]; $x++)
-      for($y = $pos1[1]; $y <= $pos2[1]; $y++)
-        for($z = $pos1[2]; $z <= $pos2[2]; $z++) {
-          ++$count;
-          if((microtime(true) - $microt) > 0.25||$count == 0||$max == $count) { $microt = microtime(true);}
-          $select = $block[mt_rand(0, $endid)];
-          $level->setBlock( $pos = new Vector3((int)$x,(int)$y,(int)$z) , $select, false, false);
-        }
-      }
-
-  }
+	public function getSpawn() : Vector3{
+		return new Vector3(128, $this->floorLevel, 128);
+	}
 }
-
-?>
+ ?>
