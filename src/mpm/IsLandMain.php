@@ -26,7 +26,7 @@ class IsLandMain extends PluginBase implements Listener{
 
   //  private $Instace;
     public $prefix = "§l§f[§bMPMLand§f]";
-	private $c;
+	public $c;
 
 
       public function onLoad(){
@@ -40,8 +40,8 @@ class IsLandMain extends PluginBase implements Listener{
           $this->c->set('flast', "0");
         //  self::$Instance = $this;
 
-        if( $this->c->__isset('islast')) return true;
-        $this->c->set('islast', "0");
+         if( $this->c->__isset('islast')) return true;
+         $this->c->set('islast', "0");
       //  self::$Instance = $this;
     }
     public function onEnable(){

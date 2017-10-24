@@ -53,7 +53,10 @@ class IsLandGenerator extends Generator {
 
 		while(true){
 			$main = new Main();
-			$num = $this->c->get('islast');
+			if(! $main->c->__isset('islast')){
+				$main->c->set('islast', 0);
+			}
+			$num = $main->c->get('islast');
 			$main->c->get('island')[$num] = [
 				'share' => [],
 				'welcomeM' => "섬".$num."번입니다. 가격 : 20000원"
