@@ -103,12 +103,12 @@ class IsLandMain extends PluginBase implements Listener{
     public function onDisalbe(){
       $this->c->save();
     }
-    public function getAll(){
+  /*  public function getAll(){
       return $this->c->getAll();
-    }
+    }*/
     public function Move(PlayerMoveEvent $ev){
       if($ev->getPlayer()->getLevel()->getName() !== "island"){
-        unset($this->nis[$ev->getPlayer()->getName()]]);
+        unset($this->nis[$ev->getPlayer()->getName()]);
         return true;
       }
 
@@ -131,7 +131,7 @@ class IsLandMain extends PluginBase implements Listener{
         $ev->getPlayer()->sendMessage($this->prefix."당신이 수정할 수 있는 섬이 아닙니다");
       }
     }
-    public function distroy(BlockBreakEvent $ev){
+    public function blockbreak(BlockBreakEvent $ev){
       if($ev->getPlayer()->getLevel()->getName() !== "island") return true;
       $d = $ev->getPlayer();
       $x = $d->getX();
