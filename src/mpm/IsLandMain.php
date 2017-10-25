@@ -13,6 +13,8 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use onebone\economyapi\EconomyAPI;
 use pocketmine\level\generator\Generator;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\block\{BlockPlaceEvent, BlockBreakEvent};
 
 use mpm\IsLandGenerator as LandGenerator;
 use mpm\FieldGenerator;
@@ -24,9 +26,9 @@ use mpm\FieldGenerator;
 
 class IsLandMain extends PluginBase implements Listener{
 
-  //  private $Instace;
     public $prefix = "§l§f[§bMPMLand§f]";
-	public $c;
+	private $c, $s;
+  private $nis = [];
 
 
       public function onLoad(){
@@ -35,39 +37,112 @@ class IsLandMain extends PluginBase implements Listener{
               'island' => [],
               'land' => []
           ]);
-  			//@mkdir($this->getDataFolder());
-          if( $this->c->__isset('flast')) return true;
+          $this->s = new Config($this->getDataFolder().'setting.yml', Config::YAML, [
+              'island' => [
+                'prize' => 20000,
+                'istype' => 'water',
+                'make' => true,
+                'pvp' => true
+              ],
+              'field' => [
+                'prize' => 20000,
+                'pvp' => true,
+                'make' => true
+              ]
+          ]);
+          if( $this->c->__isset('flast')){
           $this->c->set('flast', "0");
-        //  self::$Instance = $this;
+        }
 
-         if( $this->c->__isset('islast')) return true;
+         if( $this->c->__isset('islast')){
          $this->c->set('islast', "0");
-      //  self::$Instance = $this;
+       }
+    /*  while (true) {
+      if(! $this->c->__isset('islast')){
+				$this->c->set('islast', 0);
+			}
+			$num = $this->c->get('islast');
+			$this->c->get('island')[$num] = [
+				'share' => [],
+				'welcomeM' => "섬".$num."번입니다. 가격 : 20000원",
+        'pos' => 103 + $num * 200
+			];
+			$this->c->__unset('islast');
+			$this->c->set('islast', $num + 1);
+    }*/
     }
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         // Island Name "Land"
 
+    if($this->s->get('island')['make']){
 		Generator::addGenerator(LandGenerator::class, "island");
 		$gener = Generator::getGenerator("island");
 
 		if(!($this->getServer()->loadLevel("island"))){
-			@mkdir($this->getServer()->getDataPath() . "/" . "worlds" . "/" . "island"); //Okay, Remove method.
+			@mkdir($this->getServer()->getDataPath() . "/" . "worlds" . "/" . "island");
 			$options = [];
 			$this->getServer()->generateLevel("island", 0, $gener, $options);
 			$this->getLogger()->info("섬 생성 완료.");
 		}
 		$this->getLogger()->info("섬 로드 완료.");
+  }
+  if($this->s->get('field')['make']){
     Generator::addGenerator(FieldGenerator::class, "field");
     $gener = Generator::getGenerator("field");
 
     if(!($this->getServer()->loadLevel("field"))){
-      @mkdir($this->getServer()->getDataPath() . "/" . "worlds" . "/" . "field"); //Okay, Remove method.
+      @mkdir($this->getServer()->getDataPath() . "/" . "worlds" . "/" . "field");
       $options = [];
       $this->getServer()->generateLevel("field", 0, $gener, $options);
       $this->getLogger()->info("땅 생성 완료.");
     }
     $this->getLogger()->info("땅 로드 완료.");
+    }
+  }
+    public function onDisalbe(){
+      $this->c->save();
+    }
+    public function getAll(){
+      return $this->c->getAll();
+    }
+    public function Move(PlayerMoveEvent $ev){
+      if($ev->getPlayer()->getLevel()->getName() !== "island"){
+        unset($this->nis[$ev->getPlayer()->getName()]]);
+        return true;
+      }
+
+      if(! isset($this->nis[$ev->getPlayer()->getName()]) or $this->nis[$ev->getPlayer()->getName()] !== $this->getIsnum($ev->getPlayer())){
+        $num = $this->getIsnum($ev->getPlayer());
+        $ev->getPlayer()->sendPopup($this->c->get('island')[$num] ['WelcomeM']);
+        return true;
+      }
+    }
+    public function distroy(BlockPlaceEvent $ev){
+      if($ev->getPlayer()->getLevel()->getName() !== "island") return true;
+      $d = $ev->getPlayer();
+      $x = $d->getX();
+      $z = $d->getZ();
+      $num = $this->getIsnum($ev->getPlayer());
+      if($this->c->get('island')[$num] ['owner'] == $ev->getPlayer()->getName()){
+        $ev->setCancelled(false);
+      }else{
+        $ev->setCancelled(true);
+        $ev->getPlayer()->sendMessage($this->prefix."당신이 수정할 수 있는 섬이 아닙니다");
+      }
+    }
+    public function distroy(BlockBreakEvent $ev){
+      if($ev->getPlayer()->getLevel()->getName() !== "island") return true;
+      $d = $ev->getPlayer();
+      $x = $d->getX();
+      $z = $d->getZ();
+      $num = $this->getIsnum($ev->getPlayer());
+      if($this->c->get('island')[$num] ['owner'] == $ev->getPlayer()->getName()){
+        $ev->setCancelled(false);
+      }else{
+        $ev->setCancelled(true);
+        $ev->getPlayer()->sendMessage($this->prefix."당신이 수정할 수 있는 섬이 아닙니다");
+      }
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
@@ -81,24 +156,31 @@ class IsLandMain extends PluginBase implements Listener{
               $pl->sendMessage($this->prefix."돈이 부족합니다.");
               return true;
             }
-            if(! isset($args[1])){
+            /*if(! isset($args[1])){
               $pl->sendMessage($this->prefix."/섬 구매 [번호]");
               return true;
-            }
+            }*/
             if($this->getPlIs($pl->getName()) !== true){
             if(count($this->getPlIs($pl->getName())) >= 3 ){
               $pl->sendMessage($this->prefix."더이상의 섬을 구매하실 수 없습니다.");
               return true;
             }
           }
-          if(! isset($this->c->get('island')[$args[1]] ['owner'])){
-            $pl->sendMessage($this->prefix."더이상의 섬을 구매하실 수 없습니다.");
+          /*if(! isset($this->c->get('island')[$args[1]] ['owner'])){
+            $pl->sendMessage($this->prefix."이 섬은 주인이 있습니다.");
             return true;
+          }*/
+          if(! $this->c->__isset('islast')){
+            $this->c->set('islast',0);
           }
-            $bnum = $args[1];
-            $this->c->get('island')[$bnum] ['owner'] = $pl->getName();
-            //'welcomeM' => "섬".$bnum."번에 오신것을 환영합니다."
-            $this->c->get('island')[$bnum] ['welcomeM'] = "섬".$bnum."번에 오신것을 환영합니다.";
+            $num = $this->c->get('islast');
+            $this->c->get('island')[$num] = [
+              'owner' => $pl->getName(),
+              'share' => [],
+              'pos' => 103 + $num * 200,
+              'welcomeM' => "섬".$num."번에 오신것을 환영합니다."
+            ];
+            $bnum = $num;
               $pl->sendMessage($this->prefix."당신은 섬".$bnum."번을 구매하셨습니다.");
             break;
             case '공유':
@@ -172,6 +254,7 @@ class IsLandMain extends PluginBase implements Listener{
             $pl->sendPopup($this->prefix.$this->c->get('island')[$args[1]] ['welcomeM']);
             break;
           default:
+          $pl->sendMessage($this->prefix."/섬 [구매/양도/이동/공유/공유해제]");
             break;
         }
         break;
@@ -278,6 +361,7 @@ class IsLandMain extends PluginBase implements Listener{
             $pl->sendPopup($this->prefix.$this->c->get('field')[$args[1]] ['welcomeM']);
             break;
           default:
+          $pl->sendMessage($this->prefix."/섬 [구매/양도/이동/공유/공유해제]");
             break;
         }
       }
@@ -307,9 +391,6 @@ class IsLandMain extends PluginBase implements Listener{
       }
       return $return;
     }
-    public function mkFi($x1, $y1, $z1, $x2, $y2, $z2, $level){
-
-    }
     public function getPlFi($pname){
       $a = [];
       if($this->c->get('flast') <= 0) return true;
@@ -324,15 +405,12 @@ class IsLandMain extends PluginBase implements Listener{
       for($i = 0; $i >= $this->c->get('islast'); $i++){
         $af = $this->c->get('field')[$i] ['fpos'];
         $xf = $af['x'];
-        //$yf = $af['y'];
         $zf = $af['z'];
         $a = $this->c->get('field')[$num] ['lpos'];
         $xl = $a['x'];
-        //$yl = $a['y'];
         $zl = $a['z'];
         if(! $xf <= $pl->getX())continue;
         if(! $pl->getX() <= $xl) continue;
-        //if(! $xf <= $pl->getX() <= $xl)continue; Y는 그냥 상관이 없어요~
         if(! $zf <= $pl->getZ())continue;
         if(! $pl->getZ() <= $zl) continue;
           if($pl->getLevel()->getName() !== $this->c->get('field')[$i] ['pos'] ['level']) continue;
@@ -347,5 +425,4 @@ class IsLandMain extends PluginBase implements Listener{
       }
         return $return;
       }
-    //  return $return;
     }

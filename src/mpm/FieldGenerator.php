@@ -13,6 +13,7 @@ use pocketmine\level\ChunkManager;
 use pocketmine\level\format\generic\BaseFullChunk;
 use pocketmine\math\Vector3;
 use pocketmine\utils\{Random, Config};
+use mpm\IsLandMain as Main;
 
 class FieldGenerator extends Generator{
 
@@ -38,21 +39,9 @@ class FieldGenerator extends Generator{
 	private $landBlockDamage = 0;
 	private $landWidth = 32;
 	private $landDepth = 32;
-	private $landBorderBlockId= 2; //Block::DOUBLE_SLAB; //..?
+	private $landBorderBlockId= 168; //Block::DOUBLE_SLAB; //..?
 	private $landBorderBlockDamage = 0;
 
-	public function onLoad(){
-		@mkdir($this->getDataFolder());
-			$this->c = new Config($this->getDataFolder().'data.json', Config::JSON, [
-					'island' => [],
-					'land' => []
-			]);
-			if( $this->c->__isset('flast')) return true;
-			$this->c->set('flast', "0");
-
-		 if( $this->c->__isset('islast')) return true;
-		 $this->c->set('islast', "0");
-}
 	public function getChunkManager() : ChunkManager{
 		return $level;
 	}
@@ -100,31 +89,6 @@ class FieldGenerator extends Generator{
 		// 43, 9, 6(위로 갈시), 6, 9, 43(오른쪽으로 갈시)
 		// 37 - 7 = 30
 		//땅은 30 * 30 길 너비는 7
-		for($i = 0; $i >= $chunkX; $i++){
-			if($chunkX - $i * 37 <= 37){
-				$xl = $i;
-				$xs = $chunkX - $i * 37;
-				break;
-			}
-		}
-		for($i = 0; $i >= $chunkZ; $i++){
-			if($chunkZ - $i * 37 <= 37){
-				$zl = $i;
-				$zs = $chunkX - $i * 37; break;
-			}
-		}
-		$xa = $chunkX - $xl;
-		$za = $chunkZ - $zl;
-		if(! $main->c->__isset('flast')){
-			$main->c->set('flast', 0);
-		}
-		for($i = 0; $i >= $main->c->get('flast'); $i++){
-			$c = $main->c->get('land')[$i];
-			if($c ['fpos'] ['x'] < $xa && $xa < $c ['lpos'] ['x']) return true;
-			if($c ['fpos'] ['z'] < $xa && $xa < $c ['lpos'] ['z']) return true;
-			$this->registerLand($xa, $za, $xa + 29, $za + 29, 'field');
-			break;
-		}
 		$this->level->setChunk($chunkX, $chunkZ, $chunk);
 	}
 	private function calcGen(int $worldX, int $worldZ){

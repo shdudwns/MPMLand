@@ -53,7 +53,8 @@ class IsLandGenerator extends Generator {
 
 		while(true){
 			$main = new Main();
-			if(! $main->c->__isset('islast')){
+			$c = $main->getAll();
+			if(! isset($c['islast'])){
 				$main->c->set('islast', 0);
 			}
 			$num = $main->c->get('islast');
