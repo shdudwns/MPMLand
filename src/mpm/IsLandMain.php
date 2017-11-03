@@ -45,7 +45,7 @@ class IsLandMain extends PluginBase implements Listener{
           $this->s = new Config($this->getDataFolder().'setting.yml', Config::YAML, [
               'island' => [
                 'prize' => 20000,
-                'istype' => 'water',
+                'type' => "water",
                 'make' => true,
                 'pvp' => true,
                 'max' => 3
@@ -58,31 +58,9 @@ class IsLandMain extends PluginBase implements Listener{
               ]
           ]);
           $this->s = $this->s->getAll();
-        /*  if( $this->c->__isset('flast')){
-          $this->c->set('flast', "0");
-        }
-
-         if( $this->c->__isset('islast')){
-         $this->c->set('islast', "0");
-       }*/
-    /*  while (true) {
-      if(! $this->c->__isset('islast')){
-				$this->c->set('islast', 0);
-			}
-			$num = $this->c->get('islast');
-			$this->c->get('island')[$num] = [
-				'share' => [],
-				'welcomeM' => "섬".$num."번입니다. 가격 : 20000원",
-        'pos' => 103 + $num * 200
-			];
-			$this->c->__unset('islast');
-			$this->c->set('islast', $num + 1);
-    }*/
     }
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        // Island Name "Land"
-      //  $this->getServer()->getScheduler()->scheduleRepeatingTask(new Task($this), 1);
 
     if($this->s['island']['make']){
 		Generator::addGenerator(LandGenerator::class, "island");
@@ -109,7 +87,7 @@ class IsLandMain extends PluginBase implements Listener{
     $this->getLogger()->info("땅 로드 완료.");
     }
   }
-    public function onDisalbe(){
+    public function onDisable(){
       $this->c->save();
       $this->s->save();
     }
@@ -120,18 +98,8 @@ class IsLandMain extends PluginBase implements Listener{
         return true;
       }
       $pr = $this->prefix;
-      switch($cmd->getName()){
-        case '섬': {
-          if(! isset($args[0])){
-            $pl->sendMessage($pr." /섬 구매 §o§8- 섬을 구매합니다.");
-            $pl->sendMessage($pr." /섬 양도 [플레이어] §o§8- 섬을 [플레이어] 에게 양도합니다.");
-            $pl->sendMessage($pr." /섬 이동 [번호] §o§8- [번호] 섬으로 갑니다.");
-            $pl->sendMessage($pr." /섬 공유 [플레이어] §o§8- 이섬을 [플레이어]에게 공유 시킵니다.");
-            $pl->sendMessage($pr." /섬 공유해제 [플레이어] §o§8- 이섬 공유자인 [플레이어]를 섬에서 공유해제시킵니다.");
-            return true;
-          }
-          switch($args[0]){
-            case '구매': {
+          switch($cmd->getName()){
+            case '섬구매':
               if(EconomyAPI::getInstance()->myMoney($pl->getName()) < $this->s['island'] ['prize']){
                 $pl->sendMessage($pr."돈이 부족합니다. 섬 가격 : ".$this->s['island'] ['prize']);
                 return true;
@@ -139,40 +107,40 @@ class IsLandMain extends PluginBase implements Listener{
               if(count($this->getPlIslands($pl->getName())) >= $this->s['island'] ['max']){
                 $pl->sendMessage($pr. "당신의 섬 개수가 이미 제한 개수만큼 채워졌습니다."); return true;
               }
+            //  echo "1";
               $this->SetIsland($this->c['islast'], $pl);
-            } break;
-           case '양도': {
-             if(! isset($args[1])){$pl->sendMessage($pr."/섬 양도 [플레이어]"); return true;}
+            //  echo "2";
+              EconomyAPI::getInstance()->decrease($pl->getName(), $this->s['island'] ['prize']);
+             break;
+           case '섬양도':
+             if(! isset($args[0])){$pl->sendMessage($pr."/섬 양도 [플레이어]"); return true;}
              if($this->nowIsland($pl) == false or $this->c['island'] [$this->nowIsland($pl)] ['owner'] !== $pl->getName()){$pl->sendMessage($pr."당신은 섬에 있지 않거나 당신의 섬이 아닌곳에 있습니다."); return true;}
-             $this->SetIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[1]));
-           } break;
-           case '이동': {
-             if(! isset($args[1])){$pl->sendMessage($pr."/섬 이동 [번호]"); return true;}
-             $this->WarpIsland($args[1], $pl);
-           } break;
-           case '공유': {
-             if(! isset($args[1])){$pl->sendMessage($pr."/섬 공유 [플레이어]"); return true;}
+             $this->SetIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[0]));
+            break;
+           case '섬이동':
+             if(! isset($args[0])){$pl->sendMessage($pr."/섬 이동 [번호]"); return true;}
+             $this->WarpIsland($args[0], $pl);
+            break;
+           case '섬공유':
+             if(! isset($args[0])){$pl->sendMessage($pr."/섬 공유 [플레이어]"); return true;}
              if($this->nowIsland($pl) == false or $this->c['island'] [$this->nowIsland($pl)] ['owner'] !== $pl->getName()){$pl->sendMessage($pr."당신은 섬에 있지 않거나 당신의 섬이 아닌곳에 있습니다."); return true;}
-             $this->ShareIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[1]));
-           } break;
-           case '공유해제': {
-             if(! isset($args[1])){$pl->sendMessage($pr."/섬 공유해제 [플레이어]"); return true;}
+             $this->ShareIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[0]));
+            break;
+           case '섬공유해제':
+             if(! isset($args[0])){$pl->sendMessage($pr."/섬 공유해제 [플레이어]"); return true;}
              if($this->nowIsland($pl) == false or $this->c['island'] [$this->nowIsland($pl)] ['owner'] !== $pl->getName()){$pl->sendMessage($pr."당신은 섬에 있지 않거나 당신의 섬이 아닌곳에 있습니다."); return true;}
-             $this->OutIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[1]));
-           } break;
-           default: {
-             $pl->sendMessage($pr." /섬 구매 §o§8- 섬을 구매합니다.");
-             $pl->sendMessage($pr." /섬 양도 [플레이어] §o§8- 섬을 [플레이어] 에게 양도합니다.");
-             $pl->sendMessage($pr." /섬 이동 [번호] §o§8- [번호] 섬으로 갑니다.");
-             $pl->sendMessage($pr." /섬 공유 [플레이어] §o§8- 이섬을 [플레이어]에게 공유 시킵니다.");
-             $pl->sendMessage($pr." /섬 공유해제 [플레이어] §o§8- 이섬 공유자인 [플레이어]를 섬에서 공유해제시킵니다.");
-           } break;
-          }
-        } break;
-        case '땅': {
+             $this->OutIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[0]));
+            break;
+           case '섬':
+             $pl->sendMessage($pr." /섬구매 §o§8- 섬을 구매합니다.");
+             $pl->sendMessage($pr." /섬양도 [플레이어] §o§8- 섬을 [플레이어] 에게 양도합니다.");
+             $pl->sendMessage($pr." /섬이동 [번호] §o§8- [번호] 섬으로 갑니다.");
+             $pl->sendMessage($pr." /섬공유 [플레이어] §o§8- 이섬을 [플레이어]에게 공유 시킵니다.");
+             $pl->sendMessage($pr." /섬공유해제 [플레이어] §o§8- 이섬 공유자인 [플레이어]를 섬에서 공유해제시킵니다.");
+            break;
+        case '땅':
           $pl->sendMessage("준비중..");
           #현재 연구 중입니다..
-        }
       } return true;
     }
 
@@ -204,9 +172,16 @@ class IsLandMain extends PluginBase implements Listener{
       if(isset($this->c['island'] [$num] ['owner'])){
         unset($this->c['island'] [$num] ['owner']);
       }else{
+        $this->c['island'] [$num] = [
+  				'share' => [],
+  				'pos' => 103 + $num * 200,
+  				'welcomeM' => "섬".$num."번에 오신것을 환영합니다."
+  			];
+      //  echo "setted1";
         $this->c['islast']++;
       }
       $this->c['island'] [$num] ['owner'] = $owner->getName();
+    //  echo "setted2";
       $owner->sendMessage($this->prefix."섬 ".$num."을 가지셨습니다!"); return true;
     }
     public function ShareIsland(int $num, Player $share){
@@ -244,23 +219,7 @@ class IsLandMain extends PluginBase implements Listener{
         break;
       }
     }
-
-    /** 다른 곳에서 사용할 땅 메소드들*/
-
-    #Comming Soon..
+    public function getIsType(){
+      return $this->s['island'] ['type'];
     }
-    /*class Task extends PluginTask{
-      function onRun($currentTick){
-      /*  $this->c = new Config($this->getOwner()->getDataFolder().'data.json', Config::JSON, [
-            'island' => [],
-            'land' => []
-        ]);*//*
-        for($i = 0; ! isset($this->getOwner()->c['island'][$i]); $i++){}
-          $num = $i;
-          $this->getOwner()->c['island'] [$num] = [
-            'share' => [],
-            'pos' => 103 + $num * 200,
-            'welcomeM' => "섬".$num."번에 오신것을 환영합니다."
-          ];
-      }
-    }*/
+}

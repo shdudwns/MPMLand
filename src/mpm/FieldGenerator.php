@@ -3,7 +3,7 @@ namespace mpm;
 
 /*
  * 이 코드는 SOLOLand(Nukkit) 에서 가져왔으며
- * PS가 java에서 php로 번역하였음을 알려드립니다.
+ * PS88이 java에서 php로 번역하였음을 알려드립니다.
  */
 
 use pocketmine\level\generator\Generator;
@@ -72,11 +72,11 @@ class FieldGenerator extends Generator{
 		return $this->roadDepth;
 	}
 	public function generateChunk(int $chunkX, int $chunkZ){
+	//	echo "청크 X는! : ".$chunkX."/n"."청크 Z는! : ".$chunkZ;
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
 		if($chunkX >= 0 && $chunkZ >= 0){
 			for($x = 0; $x <= 15; $x++){
 				for($z = 0; $z <= 15; $z++){
-				//	$chunk->setBiomeColor($x,$z,133,188,86);
 					for($i = 0; $i < count($this->flatBlocksId); $i++){
 						$chunk->setBlock($x, $i, $z, $this->flatBlocksId[$i], $this->flatBlocksDamage[$i]);
 					}
