@@ -101,7 +101,7 @@ class IsLandGenerator extends Generator {
 			}
 		}
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
-		$biome = Biome::getBiome($chunk->getBiomeId(7, 7));
+		$biome = Biome::getBiome(Biome::OCEAN);
 		$biome->populateChunk($this->level, $chunkX, $chunkZ, $this->random);
 	}
 
