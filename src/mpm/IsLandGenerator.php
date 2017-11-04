@@ -9,6 +9,7 @@ use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
 use pocketmine\level\generator\Generator;
 use pocketmine\level\generator\biome\Biome;
+use pocketmine\level\generator\object\{ Tree, TallGrass };
 
 class IsLandGenerator extends Generator {
 
