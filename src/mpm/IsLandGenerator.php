@@ -4,7 +4,6 @@ namespace mpm;
 use mpm\Sphere;
 use mpm\IsLandMain as Main;
 use pocketmine\math\Vector3;
-use pocketmine\math\Matrix;
 use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
 use pocketmine\level\generator\Generator;
