@@ -82,8 +82,8 @@ class FieldGenerator extends Generator{
 			for($x = 0; $x <= 15; $x++){
 				for($z = 0; $z <= 15; $z++){
 					$y = 0;
-					foreach($this->flatBlocks as $flatBlocks){
-						$chunk->setBlock($x, $y++, $z, ...$flatBlocks);
+					foreach($this->flatBlocks as $flatBlock){
+						$chunk->setBlock($x, $y++, $z, ...$flatBlock);
 					}
 					$chunk->setBlock($x, $y, $z, ...$this->calcGen($chunkX * 16 + $x, $chunkZ * 16 + $z));
 				}
