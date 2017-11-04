@@ -92,9 +92,12 @@ class IsLandGenerator extends Generator {
 			$islandX = ($chunkX * 16) % 200;
 			$islandZ = ($chunkZ * 16) % 200;
 			if($islandX <= 100 and 100 <= $islandX + 15 and $islandZ <= 100 and 100 <= $islandZ + 15){
-				Tree::growTree(10, $this->level->getHighestBlockAt(10, 10) + 1, 10, $this->random);
+				$x = $chunkX * 16 + 8;
+				$z = $chunkZ * 16 + 8;
+				$y = $this->level->getHighestBlockAt($x, $z);
+				Tree::growTree($this->level, $x, $y + 1, $z, $this->random);
 
-				TallGrass::growGrass($this->level, new Vector3(10, $this->level->getHighestBlockAt(10, 10), 10), $this->random);
+				TallGrass::growGrass($this->level, new Vector3($x, $y, $z), $this->random);
 			}
 		}
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
