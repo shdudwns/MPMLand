@@ -67,38 +67,36 @@ class IsLandGenerator extends Generator {
 			}*/
 			}
 		}
+		
+		if($chunkX > 0 and $chunkZ > 0){
+			$islandX = ($chunkX * 16) % 200;
+			$islandZ = ($chunkZ * 16) % 200;
+			if($islandX <= 100 and 100 <= $islandX + 15 and $islandZ <= 100 and 100 <= $islandZ + 15){
+				foreach(Sphere::getElements(8, 7, 8, 7) as $el){
+					list($x, $y, $z) = $el;
+
+					if($y < 7){
+						continue;
+					} else if($y < 10) {
+						$chunk->setBlock($x, $y, $z, 1);
+					} else if($y < 12) {
+						$chunk->setBlock($x, $y, $z, 3);
+					}
+				}	
+			}
+		}
 		$this->level->setChunk($chunkX, $chunkZ, $chunk);
 	}
 
 	public function populateChunk($chunkX, $chunkZ){
-		$worldX = $chunkX * 16;
-		$worldZ = $chunkZ * 16;
-		
-		if($chunkX < 0 or $chunkZ < 0){
-			break;
-		}
-		$cx = $worldX % 200;
-		$cz = $worldZ % 200;
-		if($cx <= 100 and 100 <= $cx + 15 and $cz <= 100 and 100 <= $cz + 15){
-			$highestBlockMatrix = new Matrix(16, 16);
-			
-			foreach(Sphere::getElements(8, 7, 8, 7) as $el){
-				list($x, $y, $z) = $el;
-				
-				if($y < 7){
-					continue;
-				} else if($y < 10) {
-					$chunk->setBlock($x, $y, $z, 1);
-				} else if($y < 12) {
-					$chunk->setBlock($x, $y, $z, 3);
-				} else {
-					continue;
-				}
-				$highestBlockMatrix->setElement($x, $z, max($highestBlockMatrix->getElement($x, $z), $y));
-			}	
-			Tree::growTree(10, $highestBlockMatrix->getElement(10, 10) + 1, 10, $this->random);
-				
-			TallGrass::growGrass($this->level, new Vector3(10, $highestBlockMatrix->getElement(10, 10), 10), $this->random);
+		if($chunkX > 0 and $chunkZ > 0){
+			$islandX = ($chunkX * 16) % 200;
+			$islandZ = ($chunkZ * 16) % 200;
+			if($islandX <= 100 and 100 <= $islandX + 15 and $islandZ <= 100 and 100 <= $islandZ + 15){
+				Tree::growTree(10, $this->level->getHighestBlockAt(10, 10) + 1, 10, $this->random);
+
+				TallGrass::growGrass($this->level, new Vector3(10, $this->level->getHighestBlockAt(10, 10), 10), $this->random);
+			}
 		}
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
 		$biome = Biome::getBiome($chunk->getBiomeId(7, 7));
