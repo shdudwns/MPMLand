@@ -20,6 +20,7 @@ use pocketmine\event\entity\EntitySpawnEvent;
 
 use mpm\IsLandGenerator as LandGenerator;
 use mpm\FieldGenerator;
+use mpm\skylandGenerator;
 
 /* Author : PS88
  *
@@ -55,7 +56,13 @@ class IsLandMain extends PluginBase implements Listener{
                 'pvp' => true,
                 'make' => true,
                 'max' => 3
-              ]
+              ],
+              'skyland' => [
+                'prize' => 20000,
+                'pvp' => true,
+                'make' => true,
+                'max' => 3
+             ]
           ]);
           $this->s = $this->s->getAll();
     }
@@ -86,6 +93,18 @@ class IsLandMain extends PluginBase implements Listener{
     }
     $this->getLogger()->info("땅 로드 완료.");
     }
+   if($this->s['skyland']['make']){
+		Generator::addGenerator(skylandGenerator::class, "skyland");
+		$gener = Generator::getGenerator("skyland");
+
+		if(!($this->getServer()->loadLevel("skyland"))){
+			@mkdir($this->getServer()->getDataPath() . "/" . "worlds" . "/" . "skyland");
+			$options = [];
+			$this->getServer()->generateLevel("skyland", 0, $gener, $options);
+			$this->getLogger()->info("skyland 생성 완료.");
+		}
+		$this->getLogger()->info("skyland 로드 완료.");
+  }
   }
     public function onDisable(){
       $this->c->save();
