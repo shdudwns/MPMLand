@@ -59,7 +59,7 @@ class IsLandGenerator extends Generator {
 					} else if($y < 10) {
 						$chunk->setBlock($x, $y, $z, 1);
 					} else if($y < 12) {
-						$chunk->setBlock($x, $y, $z, 3);
+						$chunk->setBlock($x, $y, $z, 2);
 					}
 				}	
 			}
