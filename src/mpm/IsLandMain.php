@@ -132,21 +132,21 @@ class IsLandMain extends PluginBase implements Listener{
               EconomyAPI::getInstance()->decrease($pl->getName(), $this->s['island'] ['prize']);
              break;
            case '섬양도':
-             if(! isset($args[0])){$pl->sendMessage($pr."/섬 양도 [플레이어]"); return true;}
+             if(! isset($args[0])){$pl->sendMessage($pr."/섬양도 [플레이어]"); return true;}
              if($this->nowIsland($pl) == false or $this->c['island'] [$this->nowIsland($pl)] ['owner'] !== $pl->getName()){$pl->sendMessage($pr."당신은 섬에 있지 않거나 당신의 섬이 아닌곳에 있습니다."); return true;}
              $this->SetIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[0]));
             break;
            case '섬이동':
-             if(! isset($args[0])){$pl->sendMessage($pr."/섬 이동 [번호]"); return true;}
+             if(! isset($args[0])){$pl->sendMessage($pr."/섬이동 [번호]"); return true;}
              $this->WarpIsland($args[0], $pl);
             break;
            case '섬공유':
-             if(! isset($args[0])){$pl->sendMessage($pr."/섬 공유 [플레이어]"); return true;}
+             if(! isset($args[0])){$pl->sendMessage($pr."/섬공유 [플레이어]"); return true;}
              if($this->nowIsland($pl) == false or $this->c['island'] [$this->nowIsland($pl)] ['owner'] !== $pl->getName()){$pl->sendMessage($pr."당신은 섬에 있지 않거나 당신의 섬이 아닌곳에 있습니다."); return true;}
              $this->ShareIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[0]));
             break;
            case '섬공유해제':
-             if(! isset($args[0])){$pl->sendMessage($pr."/섬 공유해제 [플레이어]"); return true;}
+             if(! isset($args[0])){$pl->sendMessage($pr."/섬공유해제 [플레이어]"); return true;}
              if($this->nowIsland($pl) == false or $this->c['island'] [$this->nowIsland($pl)] ['owner'] !== $pl->getName()){$pl->sendMessage($pr."당신은 섬에 있지 않거나 당신의 섬이 아닌곳에 있습니다."); return true;}
              $this->OutIsland($this->nowIsland($pl), $this->getServer()->getPlayer($args[0]));
             break;
@@ -173,6 +173,18 @@ class IsLandMain extends PluginBase implements Listener{
         $ev->setCancelled();
         $pl->sendMessage($this->prefix."수정권한이 없습니다.");
       }
+      if($pl->isOp() or $this->c['field'] [$this->nowIsland($pl)] ['owner'] == $pl->getName() or isset($this->c['field'] [$this->nowIsland($pl)] ['share'] [$pl->getName()])){
+        $ev->setCancelled(false);
+      }elseif($pl->getLevel()->getName() == 'field'){
+        $ev->setCancelled();
+        $pl->sendMessage($this->prefix."수정권한이 없습니다.");
+    }
+      if($pl->isOp() or $this->c['skyland'] [$this->nowIsland($pl)] ['owner'] == $pl->getName() or isset($this->c['skyland'] [$this->nowIsland($pl)] ['share'] [$pl->getName()])){
+        $ev->setCancelled(false);
+      }elseif($pl->getLevel()->getName() == 'skyland'){
+        $ev->setCancelled();
+        $pl->sendMessage($this->prefix."수정권한이 없습니다.");
+    }
     }
 
     public function blockplace(BlockPlaceEvent $ev){
@@ -181,6 +193,18 @@ class IsLandMain extends PluginBase implements Listener{
       if($pl->isOp() or $this->c['island'] [$this->nowIsland($pl)] ['owner'] == $pl->getName() or isset($this->c['island'] [$this->nowIsland($pl)] ['share'] [$pl->getName()])){
         $ev->setCancelled(false);
       }elseif($pl->getLevel()->getName() == 'island'){
+        $ev->setCancelled();
+        $pl->sendMessage($this->prefix."수정권한이 없습니다.");
+      }
+      if($pl->isOp() or $this->c['field'] [$this->nowIsland($pl)] ['owner'] == $pl->getName() or isset($this->c['field'] [$this->nowIsland($pl)] ['share'] [$pl->getName()])){
+        $ev->setCancelled(false);
+      }elseif($pl->getLevel()->getName() == 'field'){
+        $ev->setCancelled();
+        $pl->sendMessage($this->prefix."수정권한이 없습니다.");
+    }
+      if($pl->isOp() or $this->c['skyland'] [$this->nowIsland($pl)] ['owner'] == $pl->getName() or isset($this->c['skyland'] [$this->nowIsland($pl)] ['share'] [$pl->getName()])){
+        $ev->setCancelled(false);
+      }elseif($pl->getLevel()->getName() == 'skyland'){
         $ev->setCancelled();
         $pl->sendMessage($this->prefix."수정권한이 없습니다.");
       }
