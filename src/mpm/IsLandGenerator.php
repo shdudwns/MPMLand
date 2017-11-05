@@ -76,7 +76,7 @@ class IsLandGenerator extends Generator {
 				
 				$x = $chunkX * 16 + 8;
 				$z = $chunkZ * 16 + 8;
-				$y = $chunk->getHighestBlockAt($x, $z);
+				$y = $chunk->getHighestBlockAt(8, 8);
 				Tree::growTree($this->level, $x, $y + 1, $z, $this->random);
 
 				TallGrass::growGrass($this->level, new Vector3($x, $y, $z), $this->random);
