@@ -10,7 +10,7 @@ use pocketmine\level\generator\Generator;
 use pocketmine\level\generator\biome\Biome;
 use pocketmine\level\generator\object\{ Tree, TallGrass };
 
-class IsLandGenerator extends Generator {
+class skylandGenerator extends Generator {
 
 	/** @var ChunkManager */
 	private $level;
@@ -33,7 +33,7 @@ class IsLandGenerator extends Generator {
 	}
 
 	public function getName() : string {
-		return "island";
+		return "skyland";
 	}
 
 	public function generateChunk(int $chunkX, int $chunkZ){
@@ -41,9 +41,7 @@ class IsLandGenerator extends Generator {
 
 		for($x = 0; $x < 16; $x++){
 			for($z = 0; $z < 16; $z++){
-				foreach([7, 1, 1, 1, 1, 1, 1, 12, 8, 8] as $y => $blockId){
-					$chunk->setBlock($x, $y, $z, $blockId);
-				}
+				
 			}
 		}
 		
@@ -54,7 +52,7 @@ class IsLandGenerator extends Generator {
 				foreach(Sphere::getElements(8, 7, 8, 7) as $el){
 					list($x, $y, $z) = $el;
 
-					if($y < 7){
+					if($y < 0){
 						continue;
 					} else if($y < 10) {
 						$chunk->setBlock($x, $y, $z, 1);
