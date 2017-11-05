@@ -101,7 +101,7 @@ class FieldGenerator extends Generator{
 			return $this->landBorderBlock;
 		}
 		$gridlandX = $worldX % ($this->landWidth + $this->roadWidth);
-		$gridlandX = $worldZ % ($this->landDepth + $this->roadDepth);
+		$gridlandZ = $worldZ % ($this->landDepth + $this->roadDepth);
 
 		if($gridlandX >= ($this->roadWidth + 2) && $gridlandZ >= ($this->roadDepth + 2)){
 			return $this->landBlock;
