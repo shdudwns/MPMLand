@@ -245,13 +245,13 @@ class IsLandMain extends PluginBase implements Listener{
       $player->sendMessage($this->prefix."섬".$num."번으로 이동하셨습니다."); return true;
     }
     public function getPlIslands($pname){
-      $d = [];
-      for ($i=0; $i >= $this->c['islast'] ; $i++) {
-        if(! isset($this->c['island'] [$i] ['owner'])) continue;
-        if(! $this->c['island'] [$i] ['owner'] == $pname) continue;
-        array_push($d, $i);
+      $lands = [];
+      foreach($this->c['island'] as $islandId => $islandData){
+        if(strcasecmp($islandData['owner'], $pname) == 0){
+          $lands[] = $islandId;
+	}
       }
-      return $d;
+      return $lands;
     }
     public function nowIsland(Player $player){
       if($player->getLevel()->getName() !== 'island') return false;
