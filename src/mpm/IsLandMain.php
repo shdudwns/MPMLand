@@ -125,18 +125,11 @@ class IsLandMain extends PluginBase implements Listener{
         case 'field': $nname = "땅"; break;
         default: $nname = false;
       }
-      $chosen = $args[0];
-      switch($chosen){
-        case "수중섬": $type = "island"; break;
-        case "하늘섬": $type = 'skyland'; break;
-        case "땅": $type = 'field'; break;
-        default: $type = false;
-      }
-      switch($chosen){
-        case "수중섬": $a = 'islast'; break;
-        case "하늘섬": $a = 'skylast'; break;
-        case "땅": $a = 'flast'; break;
-        default: $a = false;
+      switch(array_shift($args)){
+        case "수중섬": $type = "island"; $a = 'islast'; break;
+        case "하늘섬": $type = 'skyland'; $a = 'skylast'; break;
+        case "땅": $type = 'field'; $a = 'flast'; break;
+        default: $type = false; $a = false;
       }
       $pr = $this->prefix;
           switch($cmd->getName()){
