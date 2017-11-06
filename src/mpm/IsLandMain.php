@@ -127,9 +127,9 @@ class IsLandMain extends PluginBase implements Listener{
                 $pl->sendMessage($pr. "당신의 섬 개수가 이미 제한 개수만큼 채워졌습니다."); return true;
               }
             //  echo "1";
-              $this->SetIsland($this->c['islast'], $pl);
+              $this->SetIsland($this->c['island'], $pl);
             //  echo "2";
-              EconomyAPI::getInstance()->decrease($pl->getName(), $this->s['island'] ['prize']);
+              EconomyAPI::getInstance()->reduceMoney($pl->getName(), $this->s['island'] ['prize']);
              break;
            case '섬양도':
              if(! isset($args[0])){$pl->sendMessage($pr."/섬양도 [플레이어]"); return true;}
@@ -221,7 +221,7 @@ class IsLandMain extends PluginBase implements Listener{
   				'welcomeM' => "섬".$num."번에 오신것을 환영합니다."
   			];
       //  echo "setted1";
-        $this->c['islast']++;
+        $this->c['island']++;
       }
       $this->c['island'] [$num] ['owner'] = $owner->getName();
     //  echo "setted2";
@@ -255,7 +255,7 @@ class IsLandMain extends PluginBase implements Listener{
     }
     public function nowIsland(Player $player){
       if($player->getLevel()->getName() !== 'island') return false;
-      for ($i=0; $i >= $this->c['islast'] ; $i++) {
+      for ($i=0; $i >= $this->c['island'] ; $i++) {
         # code...
         if($player->distance(new Vector3(103 + $i * 200, 12, 297)) > 200) continue;
         return $i;
