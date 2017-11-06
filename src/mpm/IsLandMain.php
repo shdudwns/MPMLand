@@ -187,6 +187,7 @@ class IsLandMain extends PluginBase implements Listener{
              $pl->sendMessage($pr." 타입종류 : 하늘섬, 수중섬, 땅");
             break;
     }
+}
 
     /**EventListning Point*/
     public function blockbreak(BlockBreakEvent $ev){
