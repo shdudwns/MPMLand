@@ -179,7 +179,7 @@ class IsLandMain extends PluginBase implements Listener{
              $pl->sendMessage($pr." /땅공유해제 [플레이어] §o§8- 이땅 공유자인 [플레이어]를 섬에서 공유해제시킵니다.");
              $pl->sendMessage($pr." 타입종류 : 하늘섬, 수중섬, 땅");
             break;
-    }
+    }return true;
 }
 
     /**EventListning Point*/
@@ -287,7 +287,7 @@ class IsLandMain extends PluginBase implements Listener{
       }
       $player->sendMessage($this->prefix.$a.$num."번으로 이동하셨습니다."); return true;
     }
-    public function getPlIslands($pname, $type){
+    public function getPllands($pname, $type){
       $lands = [];
       foreach($this->c[$type] as $islandId => $islandData){
         if(strcasecmp($islandData['owner'], $pname) == 0){
