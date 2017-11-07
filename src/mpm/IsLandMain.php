@@ -141,7 +141,7 @@ class IsLandMain extends PluginBase implements Listener{
                 $pl->sendMessage($pr."돈이 부족합니다. ".$type." 가격 : ".$this->s[$ntype] ['prize']);
                 return true;
               }
-              if(count($this->getPllands($pl->getName()), $type) >= $this->s[$type] ['max']){
+              if(count($this->getPllands($pl->getName()), $ntype) >= $this->s[$type] ['max']){
                 $pl->sendMessage($pr. "당신의 ".$chosen." 개수가 이미 제한 개수만큼 채워졌습니다."); return true;
               }
             //  echo "1";
