@@ -98,8 +98,7 @@ class IsLandMain extends PluginBase implements Listener{
         $forceResources->setAccessible(true);
         $forceResources->setValue($this->getServer()->getResourceManager(), true);
         echo str_repeat("\010", strlen("⚪ Applying resource pack... ")) . TextFormat::toANSI("§a✔️ 리소스팩 로드완료    \n");
-    }
-}
+    
     if($this->s['island']['make']){
 		Generator::addGenerator(LandGenerator::class, "island");
 		$gener = Generator::getGenerator("island");
