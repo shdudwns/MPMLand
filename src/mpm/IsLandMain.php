@@ -154,12 +154,16 @@ class IsLandMain extends PluginBase implements Listener{
         case 'field': $nname = "땅"; break;
         default: $nname = false;
       }
+      if(! isset(array_shift($args))){
+        $type = false;
+      }else{
       switch(array_shift($args)){
         case "수중섬": $type = "island"; $a = 'islast'; break;
         case "하늘섬": $type = 'skyland'; $a = 'skylast'; break;
         case "땅": $type = 'field'; $a = 'flast'; break;
         default: $type = false; $a = false;
       }
+    }
       $pr = $this->prefix;
           switch($cmd->getName()){
             case '땅구매':
@@ -170,7 +174,7 @@ class IsLandMain extends PluginBase implements Listener{
                 $pl->sendMessage($pr."돈이 부족합니다. ".$type." 가격 : ".$this->s[$ntype] ['prize']);
                 return true;
               }
-              if(count($this->getPllands($pl->getName()), $type) >= $this->s[$type] ['max']){
+              if(count($this->getPllands($pl->getName(), $type)) >= $this->s[$type] ['max']){
                 $pl->sendMessage($pr. "당신의 ".$chosen." 개수가 이미 제한 개수만큼 채워졌습니다."); return true;
               }
             //  echo "1";
